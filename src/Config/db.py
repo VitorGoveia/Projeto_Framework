@@ -4,6 +4,18 @@ import psycopg2
 
 db = SQLAlchemy()
 
+
+def init_db(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2400779@localhost:5432/mamutedb'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+
+
+
+''' Testar sem isso
 def create_Dabase_if_not_exists():
     try:
         conector = psycopg2.connect(
@@ -29,11 +41,4 @@ def create_Dabase_if_not_exists():
     except Exception as e:
         print("Erro ao criar banco:", e)
 
-
-def init_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2400779@localhost:5432/mamutedb'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.init_app(app)
-
-    with app.app_context():
-        db.create_all()
+'''

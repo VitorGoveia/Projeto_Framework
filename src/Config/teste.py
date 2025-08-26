@@ -1,21 +1,21 @@
 from flask import Flask
 from db import db, init_db
+from Domain.User import UserDomain
 
 app = Flask(__name__)
 
-
-class User(db.Model):
-    __tablename__ = 'usuarios'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
 
 init_db(app)
 
 @app.route('/')
 def home():
     try:
-        novo_usuario = User(name="Gustavo", email="gustavo.gozzi@aluno.faculdadeimpacta.com.br")
+        novo_usuario = UserDomain(name="Gustavo",
+                                  cnpj="123456789-1011",
+                                  email="gustavo.gozzi@aluno.faculdadeimpacta.com.br",
+                                  celular='5511912345678',
+                                  password='147896352@'
+                                  )
         db.session.add(novo_usuario)
         db.session.commit()
         return 'Usuario adicionado com Sucesso!'
@@ -26,11 +26,13 @@ def home():
 @app.route('/user')
 def getUser():
     try:
-        usuario = User.query.get(1)
+        usuario = UserDomain.query.get(1)
         user = {
             'id': usuario.id,
             'nome': usuario.name,
-            'email': usuario.email
+            'email': usuario.email,
+            'celular': usuario.celular,
+            'status': usuario.status
         }
         return user
     
