@@ -1,9 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 
-
 db = SQLAlchemy()
-
 
 def init_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2400779@localhost:5432/mamutedb'
@@ -15,7 +13,7 @@ def init_db(app):
 
 
 
-''' Testar sem isso
+''' Testei e isso realmente nao parece ser necessario
 def create_Dabase_if_not_exists():
     try:
         conector = psycopg2.connect(
