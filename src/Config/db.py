@@ -1,9 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 
-
 db = SQLAlchemy()
-
 
 def init_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2400779@localhost:5432/mamutedb'
