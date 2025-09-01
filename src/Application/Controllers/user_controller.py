@@ -38,4 +38,24 @@ class UserController:
         }
         for user in users
         ]
+    
+    def update_user(user_id):
+        data = request.get_json()
+        update_user = UserService.update_user(user_id, data)
+
+        if not update_user:
+            return make_response(jsonify({"erro":"Usuário não encontrado!!!"}), 404)
+
+            return jsonify ({
+            "mensagem": "Usuário atualizado com sucesso!!!
+            "usuario": update_user.to_dict()
+            })   
+    
+    def delete_user(user_id):
+        sucess = UserService.delete_user(user_id)
+
+        if not sucess:
+            return make_response(jsonify({"erro":"Usuário não encontrado"}), 404)
+        return jsonify({"mensagem": "Usuário deletado com sucesso!!!"})
 '''
+
