@@ -1,18 +1,15 @@
 from flask import Flask
-#Precisamos criar as rotas
-#Precisamos criar a config do db
+from src.Config.db import init_db
+from src.Domain.User import UserDomain
+from src.Infrastructure.routes import register_routes
 
 def create_app():
-    """Função de criação e configuração do Flask"""
-
     app = Flask(__name__)
 
-    #config db vai aqui
-    #config rotas vai aqui
+    # inicializa DB
+    init_db(app)
+
+    # registra rotas
+    register_routes(app)
 
     return app
-
-app = create_app()
-
-if __name__ == "__main__":
-    app.run(debug=False)
