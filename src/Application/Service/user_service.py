@@ -1,5 +1,8 @@
-#Aqui seria para cirar o usuario e já colocar a informação dele no banco de dados
+'''#Aqui seria para cirar o usuario e já colocar a informação dele no banco de dados
 
+from src.Config.db import db
+#from src.Infrastructure.Model.User_model import User
+from src.Domain.User import UserDomain
 """
 class UserService:
     @staticmethod
@@ -13,3 +16,35 @@ class UserService:
         db.session.commit()
         return user
 """
+
+class UserService:
+    @staticmethod
+    def create_user(name, email, password, celular, cnpj):
+        new_user = UserDomain(name, email, password, celular, cnpj)
+        user = User(name=new_user.name, email=new_user.email, password=new_user.password, celular=new_user.celular, cnpj=new_user.cnpj)        
+        db.session.add(user)
+        db.session.commit()
+        return user
+    
+    def update_user(self, user_id, data):
+        user = UserDomain.query.get(user_id)
+        if not user:
+            return None
+        
+        user.name = data.get("name", user.name)
+        user.cnpj = data.get("cnpj", user.cnpj)
+        user.email = data.get("email", user.email)
+        user.celular = data.get("celular", user.celular)
+        user.password = data.get("password", user.password)
+        user.status = data.get("status", user.status)
+        
+        db.session.commit()
+        return user
+        
+    def delete_user(self, user_id):
+        user = UserDomain.query.get(user_id)
+        if not user:
+            return False
+        db.session.delete(user)
+        db.session.commit()
+        return True'''
