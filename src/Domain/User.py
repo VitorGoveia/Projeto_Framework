@@ -17,3 +17,7 @@ class UserDomain(db.Model):
     celular = db.Column(db.String(14), nullable=False)
     password = db.Column(db.String(16), nullable=False)
     status = db.Column(db.String(10), nullable=False, default='Inativo')
+
+
+if __name__ == '__main__':
+    pass
