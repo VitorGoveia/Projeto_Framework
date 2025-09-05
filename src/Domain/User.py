@@ -6,7 +6,7 @@
 #Senha
 #Status (Padrão: Inativo)
 
-from Config.db import db 
+from src.Config.db import db 
 
 class UserDomain(db.Model):
     __tablename__ = 'usuarios'
