@@ -17,9 +17,9 @@ def register_routes(app):
         return UserController.get_users()
 
     @app.route('/user/<int:user_id>', methods=['PUT'])
-    def route_update_user():
-        return UserController.update_user()
+    def route_update_user(user_id):
+        return UserController.update_user(user_id)
 
     @app.route('/user/<int:user_id>', methods=['DELETE'])
-    def route_delete_user():
-        return UserController.delete_user()
+    def route_delete_user(user_id):
+        return UserController.delete_user(user_id)

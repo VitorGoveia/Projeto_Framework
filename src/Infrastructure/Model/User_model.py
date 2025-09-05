@@ -16,7 +16,7 @@ class UserModel(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "CNPJ": self.cnpj,
+            "cnpj": self.cnpj,
             "email": self.email,
             "password": self.password,
             "phone": self.phone,

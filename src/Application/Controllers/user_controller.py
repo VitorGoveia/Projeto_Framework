@@ -12,12 +12,12 @@ class UserController:
         info_faltantes = []
         for item in data:
             if item not in dados_obrigatorios:
-                info_faltantes.append[item]
+                info_faltantes.append(item)
         
         if info_faltantes:
             return make_response(jsonify({"erro": f"Estão faltando os seguintes campos: {info_faltantes}"}), 400)
 
-        user = UserService.create_user(data.name, data.email, data.password, data.celular, data.cnpj)
+        user = UserService.create_user(data["name"], data["email"], data["password"], data["celular"], data["cnpj"])
         return make_response(jsonify({
             "mensagem": "User salvo com sucesso",
             "usuarios": user.to_dict()
@@ -31,7 +31,7 @@ class UserController:
             "Nome": user.name,
             "CNPJ": user.cnpj, 
             "E-mail": user.email,
-            "Celular": user.celular,
+            "Celular": user.phone,
             "Status": user.status
         }
         for user in users
@@ -39,6 +39,7 @@ class UserController:
     
     def update_user(user_id):
         data = request.get_json()
+        print(data)
         update_user = UserService.update_user(user_id, data)
 
         if not update_user:

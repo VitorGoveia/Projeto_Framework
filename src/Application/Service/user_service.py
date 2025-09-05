@@ -21,7 +21,8 @@ class UserService:
 
         return user
 
-    def update_user(self, user_id, data):
+    @staticmethod
+    def update_user(user_id, data):
         user = UserModel.query.get(user_id)
         if not user:
             return None
@@ -29,14 +30,15 @@ class UserService:
         user.name = data.get("name", user.name)
         user.cnpj = data.get("cnpj", user.cnpj)
         user.email = data.get("email", user.email)
-        user.celular = data.get("celular", user.celular)
+        user.phone = data.get("celular", user.phone)
         user.password = data.get("password", user.password)
         user.status = data.get("status", user.status)
         
         db.session.commit()
         return user
         
-    def delete_user(self, user_id):
+    @staticmethod
+    def delete_user(user_id):
         user = UserModel.query.get(user_id)
         if not user:
             return False
