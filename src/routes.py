@@ -1,37 +1,25 @@
-from flask import jsonify
-from src.Domain.User import UserDomain
-from src.Config.db import db
+from flask import jsonify, make_response
+from src.Application.Controllers.user_controller import UserController
 
 def register_routes(app):
-    @app.route('/')
-    def home():
-        try:
-            novo_usuario = UserDomain(
-                name="Joao",
-                cnpj="9876543321-25",
-                email="joao.vitor@aluno.faculdadeimpacta.com.br",
-                celular="5511925847798",
-                password="souotario@69"
-            )
-            db.session.add(novo_usuario)
-            db.session.commit()
-            return 'Usuario adicionado com Sucesso!'
-        except Exception as e:
-            return f"Not working :( {e}"
+    @app.route('/api', methods=['GET'])
+    def health():
+        return make_response(jsonify({
+            "mensagem": "API - OK; Docker - Up",
+        }), 200)
 
-    @app.route('/user')
-    def get_user():
-        try:
-            usuario = UserDomain.query.get(2)
-            if not usuario:
-                return jsonify({"erro": "Usuário não encontrado"}), 404
+    @app.route('/user', methods=['POST'])
+    def route_register_user():
+        return UserController.register_user()
 
-            return {
-                'id': usuario.id,
-                'nome': usuario.name,
-                'email': usuario.email,
-                'celular': usuario.celular,
-                'status': usuario.status
-            }
-        except Exception as e:
-            return f'Deu ruim {e}'
+    @app.route('/user', methods=['GET'])
+    def route_get_users():
+        return UserController.get_users()
+
+    @app.route('/user/<int:user_id>', methods=['PUT'])
+    def route_update_user():
+        return UserController.update_user()
+
+    @app.route('/user/<int:user_id>', methods=['DELETE'])
+    def route_delete_user():
+        return UserController.delete_user()

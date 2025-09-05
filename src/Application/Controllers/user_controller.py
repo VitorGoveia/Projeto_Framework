@@ -1,8 +1,6 @@
-'''from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
-#from src.Infrastructure.Model.User_model import User
-
-#USER SERVICE AINDA NÃO ESTÁ FUNCIONANDO
+from src.Infrastructure.Model.User_model import UserModel
 
 class UserController:
     @staticmethod
@@ -27,7 +25,7 @@ class UserController:
     
     def get_users():
         "Busca todos os usuarios no DB"
-        users = User.query.all()
+        users = UserModel.query.all()
         return [{
             "Id": user.id,
             "Nome": user.name,
@@ -46,10 +44,10 @@ class UserController:
         if not update_user:
             return make_response(jsonify({"erro":"Usuário não encontrado!!!"}), 404)
 
-            return jsonify ({
-            "mensagem": "Usuário atualizado com sucesso!!!
-            "usuario": update_user.to_dict()
-            })   
+        return jsonify ({
+        "mensagem": "Usuário atualizado com sucesso!!!",
+        "usuario": update_user.to_dict()
+        })   
     
     def delete_user(user_id):
         sucess = UserService.delete_user(user_id)
@@ -57,5 +55,3 @@ class UserController:
         if not sucess:
             return make_response(jsonify({"erro":"Usuário não encontrado"}), 404)
         return jsonify({"mensagem": "Usuário deletado com sucesso!!!"})
-'''
-
