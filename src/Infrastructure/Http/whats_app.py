@@ -13,7 +13,7 @@ def Twilio():
         
     message = client.messages.create(
     from_='whatsapp:+14155238886',
-    content_sid='' #tem que pegar de novo
+    content_sid='', #tem que pegar de novo
     content_variables='{"1":"111111"}',
     to='whatsapp:+5511952912079'
     )
