@@ -23,7 +23,7 @@ class UserService:
             return {"Erro": "Usuário não encontrado!"}, 404
         
         if user.status != "Ativo":
-            return {"Erro": "Usuário inativo, contate o administrador"}, 403
+            return {"Erro": "Usuário inativo, faça a autenticação de usuário"}, 403
 
         if not check_password_hash(user.password, password):
             return {"Erro": "Senha inválida!"}, 401
