@@ -1,9 +1,18 @@
 from flask import Flask
 from src.Config.db import init_db
 from src.routes import register_routes
+from flask_jwt_extended import JWTManager
+from src.Infrastructure.Auth.jwt_callbacks import register_jwt_callbacks
 
 def create_app():
     app = Flask(__name__)
+
+    #configura o JWT
+    app.config["JWT_SECRET_KEY"] = "30f081e5-461d-46f6-a318-b5d48f9552ac"
+    jwt = JWTManager(app)
+
+    #chama a função de autenticação dos callbacks em infrastrutucture
+    register_jwt_callbacks(jwt)
 
     # inicializa DB
     init_db(app)

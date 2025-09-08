@@ -3,6 +3,8 @@
 from src.Config.db import db
 from src.Infrastructure.Model.User_model import UserModel
 from src.Domain.User import UserDomain
+from werkzeug.security import check_password_hash
+
 
 class UserService:
     @staticmethod
@@ -13,6 +15,20 @@ class UserService:
         db.session.add(user)
         db.session.commit()
         return user
+    
+    def login_user(self, email, password):
+        user = UserModel.query.filter_by(email=email).first()
+        
+        if not user:
+            return {"Erro": "Usuário não encontrado!"}, 404
+        
+        if user.status != "Ativo":
+            return {"Erro": "Usuário inativo, contate o administrador"}, 403
+
+        if not check_password_hash(user.password, password):
+            return {"Erro": "Senha inválida!"}, 401
+        
+        return user, 200
     
     def get_user(self, user_id):
         user = UserModel.query.get(user_id)

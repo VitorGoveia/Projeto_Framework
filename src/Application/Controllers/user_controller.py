@@ -1,6 +1,8 @@
 from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
 from src.Infrastructure.Model.User_model import UserModel
+from flask_jwt_extended import create_access_token
+from datetime import timedelta
 
 class UserController:
     @staticmethod
@@ -33,6 +35,21 @@ class UserController:
             "usuarios": user.to_dict()
         }), 200)
     
+    def login_user():
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return make_response(jsonify({"erro":"Email e senha são obrigatórios"}), 400)
+        
+        user, status = UserService().login_user(email, password)
+        if status != 200:
+            return make_response(jsonify(user), status)
+        
+        token = create_access_token(identity=user.id, expires_delta=timedelta(hours=1))
+        return make_response(jsonify({"access_token": token}), 200)
+
     def get_users():
         "Busca todos os usuarios no DB"
         users = UserModel.query.all()
