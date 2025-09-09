@@ -4,14 +4,18 @@ from src.Config.db import db
 from src.Infrastructure.Model.User_model import UserModel
 from src.Domain.User import UserDomain
 from werkzeug.security import check_password_hash
+from src.Infrastructure.Http.whats_app import send_whatsapp_code
 
 
 class UserService:
     @staticmethod
-    def create_user(name, email, password, phone, cnpj):
-        new_user = UserDomain(name, email, password, phone, cnpj)
-        user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj)  
-        user.to_dict()      
+    def create_user(name, email, password, phone, cnpj): #TODO add: code
+        new_user = UserDomain(name, email, password, phone, cnpj) #TODO add: code
+        user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj) #TODO: code=new_user.code  
+        
+        #TODO: send_code = send_whatsapp_code(new_user.code,new_user.phone)
+        
+        user.to_dict()
         db.session.add(user)
         db.session.commit()
         return user
