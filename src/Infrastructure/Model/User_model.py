@@ -20,5 +20,6 @@ class UserModel(db.Model):
             "email": self.email,
             "password": self.password,
             "phone": self.phone,
-            "status": self.status
+            "status": self.status,
+            "code": self.code
         }

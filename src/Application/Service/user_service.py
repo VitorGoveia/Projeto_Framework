@@ -9,9 +9,9 @@ from src.Infrastructure.Http.whats_app import send_whatsapp_code
 
 class UserService:
     @staticmethod
-    def create_user(name, email, password, phone, cnpj): #TODO add: code
-        new_user = UserDomain(name, email, password, phone, cnpj) #TODO add: code
-        user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj) #TODO: code=new_user.code  
+    def create_user(name, email, password, phone, cnpj, code): 
+        new_user = UserDomain(name, email, password, phone, cnpj, code)
+        user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj, code=new_user.code)   
         
         #TODO: send_code = send_whatsapp_code(new_user.code,new_user.phone)
         
@@ -28,9 +28,6 @@ class UserService:
         
         if user.status != "Ativo":
             return {"Erro": "Usuário inativo, faça a autenticação de usuário"}, 403
-
-        if not check_password_hash(user.password, password):
-            return {"Erro": "Senha inválida!"}, 401
         
         return user, 200
     
@@ -53,6 +50,17 @@ class UserService:
         user.phone = data.get("celular", user.phone)
         user.password = data.get("password", user.password)
         user.status = data.get("status", user.status)
+        
+        db.session.commit()
+        return user
+    
+    @staticmethod
+    def activating_user(user_id):
+        user = UserModel.query.get(user_id)
+        if not user:
+            return None
+        
+        user.status = "Ativo"
         
         db.session.commit()
         return user
