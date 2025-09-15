@@ -1,7 +1,7 @@
 import os 
 from twilio.rest import Client
 import json
-import UserDomain from src.Domain.User
+from src.Domain.User import UserDomain
 
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure

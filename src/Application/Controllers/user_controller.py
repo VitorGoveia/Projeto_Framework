@@ -46,7 +46,7 @@ class UserController:
         code = data.get("code")
 
         user = UserModel.query.get(user_id)
-        if code == user.code and email == user.email:
+        if str(code) == str(user.code) and email == user.email:
             activate_user = UserService.activating_user(user_id)
 
             return make_response(jsonify ({
@@ -76,7 +76,8 @@ class UserController:
         if status != 200:
             return make_response(jsonify(user), status)
         
-        token = create_access_token(identity=user.id, expires_delta=timedelta(hours=1))
+        token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=1))
+    
         return make_response(jsonify({"access_token": token}), 200)
 
     def get_user(user_id):

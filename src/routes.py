@@ -1,4 +1,3 @@
-from flask import jsonify, make_response
 from src.Application.Controllers.user_controller import UserController
 from flask_jwt_extended import jwt_required
 
@@ -16,12 +15,12 @@ def register_routes(app):
         return UserController.activate_user(user_id)
 
     @app.route('/user/<int:user_id>', methods=['GET'])
-    #@jwt_required()
+    @jwt_required()
     def route_get_users(user_id):
         return UserController.get_user(user_id)
 
     @app.route('/user/<int:user_id>', methods=['PUT'])
-    #@jwt_required()
+    @jwt_required()
     def route_update_user(user_id):
         return UserController.update_user(user_id)
 
@@ -29,3 +28,4 @@ def register_routes(app):
     @jwt_required()
     def route_delete_user(user_id):
         return UserController.delete_user(user_id)
+    
