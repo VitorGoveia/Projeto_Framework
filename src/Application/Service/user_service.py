@@ -13,7 +13,7 @@ class UserService:
         new_user = UserDomain(name, email, password, phone, cnpj, code)
         user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj, code=new_user.code)   
         
-        #TODO: send_code = send_whatsapp_code(new_user.code,new_user.phone)
+        send_code = send_whatsapp_code(user.code,user.phone)
         
         user.to_dict()
         db.session.add(user)

@@ -6,6 +6,9 @@ from src.Domain.User import UserDomain
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure
 
+
+#TODO: transformar em classe
+
 def send_whatsapp_code(code:str,phone:str):
 
     account_sid = "" #SID do Twilio tem que pegar novamente
@@ -20,5 +23,3 @@ def send_whatsapp_code(code:str,phone:str):
     )
     print(message.sid)
 
-
-#send_whatsapp_code(123456,5511952912079)
