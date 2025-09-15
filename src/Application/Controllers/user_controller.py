@@ -1,6 +1,5 @@
 from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
-from src.Infrastructure.Model.User_model import UserModel
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 import random
@@ -45,17 +44,10 @@ class UserController:
         email = data.get("email")
         code = data.get("code")
 
-        user = UserModel.query.get(user_id)
-        if str(code) == str(user.code) and email == user.email:
-            activate_user = UserService.activating_user(user_id)
-
-            return make_response(jsonify ({
-                "mensagem": "Usuário ativado com sucesso!!!",
-                "usuario": {"email": activate_user.email, "nome": activate_user.name}
-                }))
-        return make_response(jsonify ({
-                "mensagem": "erro, informações inválidas",
-                }))
+        if (str(code) and email):
+            activated_user = UserService.activating_user(code, email, user_id)
+       
+        return  jsonify(activated_user)
             
     def login_user():
         """Faz o login, retorna o TOKEN"""
@@ -64,34 +56,21 @@ class UserController:
         password = data.get("password")
 
         if not email or not password:
-            return make_response(jsonify({"erro":"Email e senha são obrigatórios"}), 400)
+            return make_response(jsonify({"erro":"'email' e 'password' são obrigatórios"}), 400)
         
-        user_find = UserModel.query.filter_by(email=email).first()
-        if not (password == user_find.password and email == user_find.email):
-            return make_response(jsonify ({
-                "mensagem": "erro, informações inválidas",
-                }))
-        
-        user, status = UserService().login_user(email, password)
+        user, status = UserService.login_user(email, password)
         if status != 200:
             return make_response(jsonify(user), status)
         
         token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=1))
-    
+
         return make_response(jsonify({"access_token": token}), 200)
 
     def get_user(user_id):
         "Busca o usuario no DB"
-        user = UserModel.query.get(user_id)
-        return {
-            "Id": user.id,
-            "name": user.name,
-            "cnpj": user.cnpj, 
-            "email": user.email,
-            "phone": user.phone,
-            "status": user.status,
-            "code": user.code
-        }
+        user = UserService.get_user_by_id(user_id)
+
+        return jsonify(user),200
     
     def update_user(user_id):
         """Atualiza os dados do Usuario"""

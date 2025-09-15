@@ -13,16 +13,21 @@ class UserService:
         new_user = UserDomain(name, email, password, phone, cnpj, code)
         user = UserModel(name=new_user.name, email=new_user.email, password=new_user.password, phone =new_user.phone, cnpj=new_user.cnpj, code=new_user.code)   
         
-        send_code = send_whatsapp_code(user.code,user.phone)
+        #send_code = send_whatsapp_code(user.code,user.phone)
         
         user.to_dict()
         db.session.add(user)
         db.session.commit()
         return user
     
-    def login_user(self, email, password):
+    def login_user(email, password):
         user = UserModel.query.filter_by(email=email).first()
         
+        if not (password == user.password and email == user.email):
+            return {
+                "mensagem": "erro, informações inválidas",
+                }, 400
+
         if not user:
             return {"Erro": "Usuário não encontrado!"}, 404
         
@@ -31,12 +36,20 @@ class UserService:
         
         return user, 200
     
-    def get_user(self, user_id):
+    def get_user_by_id(user_id):
         user = UserModel.query.get(user_id)
         if not user:
             return {"Erro": "Usuário não encontrado"}
 
-        return user
+        return {
+            "Id": user.id,
+            "name": user.name,
+            "cnpj": user.cnpj, 
+            "email": user.email,
+            "phone": user.phone,
+            "status": user.status,
+            "code": user.code
+        }
 
     @staticmethod
     def update_user(user_id, data):
@@ -55,22 +68,33 @@ class UserService:
         return user
     
     @staticmethod
-    def activating_user(user_id):
+    def activating_user(code, email, user_id):
         user = UserModel.query.get(user_id)
         if not user:
             return None
         
-        user.status = "Ativo"
+        if str(code) == str(user.code) and email == user.email:
+
+            user.status = "Ativo"
         
-        db.session.commit()
-        return user
+            db.session.commit()
+
+            return {
+                "mensagem": "Usuário ativado com sucesso!!!",
+                "usuario": {"email": user.email, "nome": user.name}
+                }, 200
+        
+        return {
+                "mensagem": "erro, informações inválidas",
+            }
         
     @staticmethod
     def delete_user(user_id):
         user = UserModel.query.get(user_id)
         if not user:
-            return False
+            return None
         
-        db.session.delete(user)
+        user.status = "Inativo"
+        
         db.session.commit()
-        return True
+        return user
