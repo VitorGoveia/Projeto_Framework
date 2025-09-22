@@ -29,3 +29,4 @@ def register_routes(app):
     def route_delete_user(user_id):
         return UserController.delete_user(user_id)
     
+    

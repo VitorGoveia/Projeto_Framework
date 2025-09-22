@@ -18,7 +18,6 @@ class UserModel(db.Model):
             "name": self.name,
             "cnpj": self.cnpj,
             "email": self.email,
-            "password": self.password,
             "phone": self.phone,
             "status": self.status,
             "code": self.code

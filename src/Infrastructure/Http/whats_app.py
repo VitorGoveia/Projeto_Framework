@@ -3,21 +3,15 @@ from twilio.rest import Client
 import json
 from src.Domain.User import UserDomain
 
-# Find your Account SID and Auth Token at twilio.com/console
-# and set the environment variables. See http://twil.io/secure
-
-
-#TODO: transformar em classe
-
 def send_whatsapp_code(code:str,phone:str):
 
-    account_sid = "" #SID do Twilio tem que pegar novamente
-    auth_token = "" #token do Twilio tem que pegar novamente (git ta barrando)
+    account_sid = ""
+    auth_token = "" 
     client = Client(account_sid, auth_token)
         
     message = client.messages.create(
     from_='whatsapp:+14155238886',
-    content_sid='', #tem que pegar de novo
+    content_sid='',
     content_variables=f'{{"1":"{code}"}}',
     to=f"whatsapp:+{phone}"
     )
