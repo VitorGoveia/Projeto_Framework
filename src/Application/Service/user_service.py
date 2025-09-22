@@ -18,13 +18,11 @@ class UserService:
     def create_user(**user_data):
         """Cria usuário recebendo dados como dicionário"""
         try:
-            # Campos obrigatórios
             campos_obrigatorios = ["name", "email", "password", "phone", "cnpj"]
             valido, erro, status = UserService._validar_dados_obrigatorios(user_data, campos_obrigatorios)
             if not valido:
                 return erro, status
             
-            # Verifica se email ou CNPJ já existem
             existing_user = UserModel.query.filter(
                 (UserModel.email == user_data["email"]) | 
                 (UserModel.cnpj == user_data["cnpj"])
@@ -35,13 +33,11 @@ class UserService:
                     return {"erro": "Email já cadastrado"}, 409
                 return {"erro": "CNPJ já cadastrado"}, 409
             
-            # Gera código e hash da senha
             import random
             activation_code = random.randint(1000, 9999)
             user_data["code"] = activation_code
             user_data["password"] = generate_password_hash(user_data["password"])
             
-            # Cria usuário usando desempacotamento
             new_user = UserDomain(**user_data)
             user = UserModel(
                 name=new_user.name,
@@ -65,7 +61,6 @@ class UserService:
     def login_user(**credentials):
         """Login recebendo credenciais como dicionário"""
         try:
-            # Valida campos obrigatórios
             campos_obrigatorios = ["email", "password"]
             valido, erro, status = UserService._validar_dados_obrigatorios(credentials, campos_obrigatorios)
             if not valido:
@@ -101,8 +96,7 @@ class UserService:
                 "cnpj": user.cnpj, 
                 "email": user.email,
                 "phone": user.phone,
-                "status": user.status,
-                "data_criacao": user.created_at.isoformat() if user.created_at else None
+                "status": user.status
             }, 200
             
         except Exception as e:
@@ -116,13 +110,11 @@ class UserService:
             if not user:
                 return {"erro": "Usuário não encontrado"}, 404
             
-            # Verifica se email já existe em outro usuário
             if 'email' in update_data and update_data['email'] != user.email:
                 existing_user = UserModel.query.filter_by(email=update_data['email']).first()
                 if existing_user and existing_user.id != user_id:
                     return {"erro": "Email já está em uso por outro usuário"}, 409
             
-            # Campos permitidos para atualização
             campos_permitidos = ['name', 'cnpj', 'email', 'phone', 'password']
             
             for campo in campos_permitidos:

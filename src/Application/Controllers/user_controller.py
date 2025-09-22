@@ -14,7 +14,6 @@ class UserController:
             if not data:
                 return make_response(jsonify({"erro": "Dados JSON são obrigatórios"}), 400)
             
-            # Validações existentes...
             dados_obrigatorios = ["name", "email", "password", "cnpj", "phone"]
             info_faltantes = [item for item in dados_obrigatorios if item not in data]
             
@@ -24,11 +23,9 @@ class UserController:
                     400
                 )
             
-            # Validação de email
             if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data["email"]):
                 return make_response(jsonify({"erro": "E-mail inválido"}), 400)
             
-            # Validação de telefone
             phone_str = str(data["phone"])
             phone_clean = re.sub(r'\D', '', phone_str)
             
@@ -41,9 +38,8 @@ class UserController:
             if len(phone_clean) == 11 and not phone_clean[2] == '9':
                 return make_response(jsonify({"erro": "Celular deve começar com 9"}), 400)
             
-            data["phone"] = phone_clean  # Usa versão limpa
+            data["phone"] = phone_clean
             
-            # Chama o service com os dados
             result, status_code = UserService.create_user(**data)
             
             if status_code != 201:
