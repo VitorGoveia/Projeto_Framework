@@ -2,93 +2,132 @@ from flask import request, jsonify, make_response
 from src.Application.Service.user_service import UserService
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
-import random
+import re
 
 class UserController:
     @staticmethod
     def register_user():
-        """Cadastra o Usúario no DB"""
-        data = request.get_json()
-
-        dados_obrigatorios = ["name", "email", "password", "cnpj", "phone"]
-        info_faltantes = []
-        for item in dados_obrigatorios:
-            if item not in data:
-                info_faltantes.append(item)
-        
-        if info_faltantes:
-            return make_response(jsonify({"erro": f"Estão faltando os seguintes campos: {info_faltantes}"}), 400)
-        
-        if not '@' in data["email"] or not '.com' in data["email"]:
-            return make_response(jsonify({"erro": "E-mail inválido"}))
-        
+        """Cadastra o Usuário no DB"""
         try:
-            if len((data["phone"])) < 13:
-                return make_response(jsonify({"erro": "Numero de celular invalido. Formato: 5511912345678"}))
+            data = request.get_json()
             
-        except:
-            return make_response(jsonify({"erro": "Celular invalido. Por favor, insira somente caracteres numericos"}))
-
-        #Código para validação na Twilio
-        new_code = random.randint(1000, 9999)
-
-        user = UserService.create_user(data["name"], data["email"], data["password"], data["phone"], data["cnpj"], new_code)
-        return make_response(jsonify({
-            "mensagem": "User salvo com sucesso",
-            "usuarios": user.to_dict()
-        }), 200)
+            if not data:
+                return make_response(jsonify({"erro": "Dados JSON são obrigatórios"}), 400)
+            
+            # Validações existentes...
+            dados_obrigatorios = ["name", "email", "password", "cnpj", "phone"]
+            info_faltantes = [item for item in dados_obrigatorios if item not in data]
+            
+            if info_faltantes:
+                return make_response(
+                    jsonify({"erro": f"Estão faltando os seguintes campos: {info_faltantes}"}), 
+                    400
+                )
+            
+            # Validação de email
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', data["email"]):
+                return make_response(jsonify({"erro": "E-mail inválido"}), 400)
+            
+            # Validação de telefone
+            phone_str = str(data["phone"])
+            phone_clean = re.sub(r'\D', '', phone_str)
+            
+            if len(phone_clean) not in [10, 11]:
+                return make_response(
+                    jsonify({"erro": "Telefone inválido. Use 10 ou 11 dígitos"}), 
+                    400
+                )
+            
+            if len(phone_clean) == 11 and not phone_clean[2] == '9':
+                return make_response(jsonify({"erro": "Celular deve começar com 9"}), 400)
+            
+            data["phone"] = phone_clean  # Usa versão limpa
+            
+            # Chama o service com os dados
+            result, status_code = UserService.create_user(**data)
+            
+            if status_code != 201:
+                return make_response(jsonify(result), status_code)
+            
+            return make_response(jsonify({
+                "mensagem": "Usuário criado com sucesso",
+                "usuario": result.to_dict()
+            }), 201)
+            
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
     
-    def activate_user(user_id):
-        """Ativa o usuario"""
-        data = request.get_json()
-        email = data.get("email")
-        code = data.get("code")
-
-        if (str(code) and email):
-            activated_user = UserService.activating_user(code, email, user_id)
-       
-        return  jsonify(activated_user)
-            
+    @staticmethod
     def login_user():
-        """Faz o login, retorna o TOKEN"""
-        data = request.get_json()
-        email = data.get("email")
-        password = data.get("password")
+        """Faz o login"""
+        try:
+            data = request.get_json()
+            
+            if not data:
+                return make_response(jsonify({"erro": "Dados JSON são obrigatórios"}), 400)
+            
+            result, status_code = UserService.login_user(**data)
+            
+            if status_code != 200:
+                return make_response(jsonify(result), status_code)
+            
+            token = create_access_token(identity=str(result.id), expires_delta=timedelta(hours=1))
 
-        if not email or not password:
-            return make_response(jsonify({"erro":"'email' e 'password' são obrigatórios"}), 400)
-        
-        user, status = UserService.login_user(email, password)
-        if status != 200:
-            return make_response(jsonify(user), status)
-        
-        token = create_access_token(identity=str(user.id), expires_delta=timedelta(hours=1))
+            return make_response(jsonify({
+                "access_token": token,
+                "token_type": "bearer",
+                "expires_in": 3600,
+                "user_id": result.id
+            }), 200)
+            
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
 
-        return make_response(jsonify({"access_token": token}), 200)
+    @staticmethod
+    def activate_user(user_id):
+        """Ativa o usuário"""
+        try:
+            data = request.get_json()
+            
+            if not data:
+                return make_response(jsonify({"erro": "Dados JSON são obrigatórios"}), 400)
+            
+            data["user_id"] = user_id
+            result, status_code = UserService.activating_user(**data)
+            return make_response(jsonify(result), status_code)
+            
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
 
+    @staticmethod
     def get_user(user_id):
-        "Busca o usuario no DB"
-        user = UserService.get_user_by_id(user_id)
-
-        return jsonify(user),200
+        """Busca usuário por ID"""
+        try:
+            result, status_code = UserService.get_user_by_id(user_id)
+            return make_response(jsonify(result), status_code)
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
     
+    @staticmethod
     def update_user(user_id):
-        """Atualiza os dados do Usuario"""
-        data = request.get_json()
-        update_user = UserService.update_user(user_id, data)
-
-        if not update_user:
-            return make_response(jsonify({"erro":"Usuário não encontrado!!!"}), 404)
-
-        return jsonify ({
-        "mensagem": "Usuário atualizado com sucesso!!!",
-        "usuario": update_user.to_dict()
-        })   
+        """Atualiza usuário"""
+        try:
+            data = request.get_json()
+            
+            if not data:
+                return make_response(jsonify({"erro": "Dados JSON são obrigatórios"}), 400)
+            
+            result, status_code = UserService.update_user(user_id, **data)
+            return make_response(jsonify(result), status_code)
+            
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
     
+    @staticmethod
     def delete_user(user_id):
-        """Inativa o Usuario"""
-        sucess = UserService.delete_user(user_id)
-
-        if not sucess:
-            return make_response(jsonify({"erro":"Usuário não encontrado"}), 404)
-        return jsonify({"mensagem": "Usuário deletado com sucesso!!!"})
+        """Inativa usuário"""
+        try:
+            result, status_code = UserService.delete_user(user_id)
+            return make_response(jsonify(result), status_code)
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)

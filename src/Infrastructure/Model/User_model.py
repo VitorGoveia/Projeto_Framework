@@ -17,8 +17,7 @@ class UserModel(db.Model):
             "id": self.id,
             "name": self.name,
             "cnpj": self.cnpj,
-            "email": self.email,
-            "password": self.password,
+            "email": self.email, #password não deve ser exposto
             "phone": self.phone,
             "status": self.status,
             "code": self.code
