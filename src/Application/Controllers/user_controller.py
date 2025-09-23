@@ -7,7 +7,6 @@ import re
 class UserController:
     @staticmethod
     def register_user():
-        """Cadastra o Usuário no DB"""
         try:
             data = request.get_json()
             
@@ -55,7 +54,6 @@ class UserController:
     
     @staticmethod
     def login_user():
-        """Faz o login"""
         try:
             data = request.get_json()
             
@@ -81,7 +79,6 @@ class UserController:
 
     @staticmethod
     def activate_user(user_id):
-        """Ativa o usuário"""
         try:
             data = request.get_json()
             
@@ -106,7 +103,6 @@ class UserController:
     
     @staticmethod
     def update_user(user_id):
-        """Atualiza usuário"""
         try:
             data = request.get_json()
             
@@ -121,7 +117,6 @@ class UserController:
     
     @staticmethod
     def delete_user(user_id):
-        """Inativa usuário"""
         try:
             result, status_code = UserService.delete_user(user_id)
             return make_response(jsonify(result), status_code)
