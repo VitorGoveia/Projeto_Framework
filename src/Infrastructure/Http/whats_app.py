@@ -3,6 +3,7 @@ from twilio.rest import Client
 import json
 from src.Domain.User import UserDomain
 
+
 def send_whatsapp_code(code:str,phone:str):
 
     account_sid = ""
