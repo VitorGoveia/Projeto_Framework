@@ -8,7 +8,6 @@ class UserService:
     
     @staticmethod
     def _validar_dados_obrigatorios(data, campos_obrigatorios):
-        """Valida se todos os campos obrigatórios estão presentes"""
         campos_faltantes = [campo for campo in campos_obrigatorios if campo not in data]
         if campos_faltantes:
             return False, {"erro": f"Campos obrigatórios faltando: {campos_faltantes}"}, 400
@@ -16,7 +15,6 @@ class UserService:
 
     @staticmethod
     def create_user(**user_data):
-        """Cria usuário recebendo dados como dicionário"""
         try:
             campos_obrigatorios = ["name", "email", "password", "phone", "cnpj"]
             valido, erro, status = UserService._validar_dados_obrigatorios(user_data, campos_obrigatorios)
@@ -36,6 +34,7 @@ class UserService:
             import random
             activation_code = random.randint(1000, 9999)
             user_data["code"] = activation_code
+
             user_data["password"] = generate_password_hash(user_data["password"])
             
             new_user = UserDomain(**user_data)
@@ -48,7 +47,7 @@ class UserService:
                 code=new_user.code
             )
 
-            send_whatsapp_code(user.code, user.phone)
+            #send_whatsapp_code(user.code, user.phone)
             
             db.session.add(user)
             db.session.commit()
@@ -61,7 +60,6 @@ class UserService:
     
     @staticmethod
     def login_user(**credentials):
-        """Login recebendo credenciais como dicionário"""
         try:
             campos_obrigatorios = ["email", "password"]
             valido, erro, status = UserService._validar_dados_obrigatorios(credentials, campos_obrigatorios)
@@ -86,7 +84,6 @@ class UserService:
     
     @staticmethod
     def get_user_by_id(user_id):
-        """Mantém igual pois só recebe um parâmetro"""
         try:
             user = UserModel.query.get(user_id)
             if not user:
@@ -106,7 +103,6 @@ class UserService:
 
     @staticmethod
     def update_user(user_id, **update_data):
-        """Atualiza usuário recebendo dados como dicionário"""
         try:
             user = UserModel.query.get(user_id)
             if not user:
@@ -142,7 +138,6 @@ class UserService:
     
     @staticmethod
     def activating_user(**activation_data):
-        """Ativa usuário recebendo dados como dicionário"""
         try:
             campos_obrigatorios = ["code", "email", "user_id"]
             valido, erro, status = UserService._validar_dados_obrigatorios(activation_data, campos_obrigatorios)
@@ -177,7 +172,6 @@ class UserService:
         
     @staticmethod
     def delete_user(user_id):
-        """Recebe somente um parâmetro, mantém igual"""
         try:
             user = UserModel.query.get(user_id)
             if not user:
