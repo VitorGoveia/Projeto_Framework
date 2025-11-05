@@ -56,10 +56,18 @@ class ProductController:
             
     @staticmethod
     def get_product(product_id):
-        """Busca usuário por ID"""
         try:
             result, status_code = ProductService.get_product_by_id(product_id)
             return make_response(jsonify(result), status_code)
+        except Exception as e:
+            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
+        
+    @staticmethod
+    def get_product_seller(id_seller_info):
+        try:
+            result, status_code = ProductService.get_product_by_id_seller(id_seller_info)
+            return make_response(jsonify(result), status_code)
+        
         except Exception as e:
             return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
     

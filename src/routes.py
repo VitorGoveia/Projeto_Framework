@@ -36,6 +36,11 @@ def register_routes(app):
     def route_get_product(product_id):
         return ProductController.get_product(product_id)
     
+    @app.route('/product/seller/<int:id_seller>', methods=['GET'])
+    @jwt_required()
+    def get_product_by_seller(id_seller):
+        return ProductController.get_product_seller(id_seller)
+ 
     @app.route('/product', methods=['POST'])
     @jwt_required()
     def route_create_product():
@@ -45,7 +50,7 @@ def register_routes(app):
     @jwt_required()
     def route_update_product(product_id):
         return ProductController.update_product(product_id)
-    
+       
     @app.route('/product/<int:product_id>', methods=['DELETE'])
     @jwt_required()
     def route_delete_product(product_id):

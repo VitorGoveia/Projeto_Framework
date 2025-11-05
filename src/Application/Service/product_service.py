@@ -43,7 +43,22 @@ class ProductService:
             if not product:
                 return {"erro": "Produto não encontrado"}, 404
 
+            if product.status == False:
+                return {"Erro": "Produto inativo"}, 404
+
             return product.to_dict(), 200
+            
+        except Exception as e:
+            raise e
+        
+    @staticmethod
+    def get_product_by_id_seller(id_seller_info):
+        try:
+            product = ProductModel.query.filter_by(id_seller=id_seller_info).all()
+            if not product:
+                return {"erro": "Produto não encontrado"}, 404
+
+            return [prod.to_dict() for prod in product], 200
             
         except Exception as e:
             raise e
