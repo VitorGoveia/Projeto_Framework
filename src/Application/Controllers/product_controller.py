@@ -89,8 +89,8 @@ class ProductController:
                 product_data["quantity"] = int(form.get("quantity"))
             if "id_seller" in form and form.get("id_seller").strip():
                 product_data["id_seller"] = int(form.get("id_seller"))
-            if "status" in form and form.get("id_seller").strip():
-                validar = form.get("id_seller")
+            if "status" in form and form.get("status").strip():
+                validar = form.get("status")
                 if validar in "AtivoativoATIVO":
                     product_data["status"] = "Ativo"
                 else:
@@ -102,6 +102,8 @@ class ProductController:
                 file_path = os.path.join(UPLOAD_FOLDER, unique_name)
                 file.save(file_path)
                 product_data["url_image"] = f"/static/images/{unique_name}"
+            else:
+                product_data["url_image"] = form.get("url_image")
 
             if not product_data:
                 return make_response(jsonify({"erro": "Nenhum dado enviado para atualização"}), 400)
