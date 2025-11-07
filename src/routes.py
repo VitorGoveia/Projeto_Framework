@@ -55,3 +55,25 @@ def register_routes(app):
     @jwt_required()
     def route_delete_product(product_id):
         return ProductController.delete_product(product_id)
+    
+
+    
+    @app.route('/sell/<int:sell_id>', methods=['GET'])
+    @jwt_required()
+    def route_get_sell(sell_id):
+        return SellController.get_sell(sell_id)
+    
+    @app.route('/sell', methods=['POST'])
+    @jwt_required()
+    def route_create_sell():
+        return SellController.register_sell()
+    
+    @app.route('/sell/<int:sell_id>', methods=['PUT'])
+    @jwt_required()
+    def route_update_sell(sell_id):
+        return SellController.update_sell(sell_id)
+       
+    @app.route('/sell/<int:sell_id>', methods=['DELETE'])
+    @jwt_required()
+    def route_delete_sell(sell_id):
+        return SellController.delete_product(sell_id)
