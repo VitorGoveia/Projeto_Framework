@@ -7,7 +7,7 @@ class ProductModel(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(10), nullable=False, default='Ativo')
+    status = db.Column(db.String(10), nullable=False, default='Ativa')
     url_image = db.Column(db.String(255), nullable=True)
 
     id_seller = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
