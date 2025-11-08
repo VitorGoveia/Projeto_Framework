@@ -1,7 +1,8 @@
 from src.Application.Controllers.user_controller import UserController
 from src.Application.Controllers.product_controller import ProductController
-
+from src.Application.Controllers.sell_controller import SellController
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
 
 def register_routes(app):
     @app.route('/user', methods=['POST'])
@@ -31,6 +32,9 @@ def register_routes(app):
     def route_delete_user(user_id):
         return UserController.delete_user(user_id)
 
+
+
+
     @app.route('/product/<int:product_id>', methods=['GET'])
     @jwt_required()
     def route_get_product(product_id):
@@ -57,23 +61,35 @@ def register_routes(app):
         return ProductController.delete_product(product_id)
     
 
+
+
     
     @app.route('/sell/<int:sell_id>', methods=['GET'])
     @jwt_required()
     def route_get_sell(sell_id):
-        return SellController.get_sell(sell_id)
-    
-    @app.route('/sell', methods=['POST'])
+        current_user_id = get_jwt_identity()
+        return SellController.get_sell_by_id(sell_id, int(current_user_id))  
+
+    @app.route('/sell/seller', methods=['GET'])
+    @jwt_required()
+    def route_get_sells_by_seller():
+        current_user_id = get_jwt_identity()
+        return SellController.get_sell_by_id_seller(int(current_user_id))  
+
+    @app.route('/sell', methods=['POST'])   
     @jwt_required()
     def route_create_sell():
-        return SellController.register_sell()
-    
+        current_user_id = get_jwt_identity()
+        return SellController.create_sell(int(current_user_id))  
+
     @app.route('/sell/<int:sell_id>', methods=['PUT'])
     @jwt_required()
     def route_update_sell(sell_id):
-        return SellController.update_sell(sell_id)
-       
+        current_user_id = get_jwt_identity()
+        return SellController.update_sell_by_id(sell_id, int(current_user_id))  
+
     @app.route('/sell/<int:sell_id>', methods=['DELETE'])
     @jwt_required()
     def route_delete_sell(sell_id):
-        return SellController.delete_product(sell_id)
+        current_user_id = get_jwt_identity()
+        return SellController.delete_sell(sell_id, int(current_user_id))  
