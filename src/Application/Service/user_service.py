@@ -2,7 +2,7 @@ from src.Config.db import db
 from src.Infrastructure.Model.User_model import UserModel
 from src.Domain.User import UserDomain
 from werkzeug.security import generate_password_hash, check_password_hash
-#from src.Infrastructure.Http.whats_app import send_whatsapp_code
+from src.Infrastructure.Http.whats_app import send_sms_code
 
 class UserService:
     
@@ -47,7 +47,7 @@ class UserService:
                 code=new_user.code
             )
 
-            #send_whatsapp_code(user.code, user.phone)
+            send_sms_code(user.code, "11952912079")
             
             db.session.add(user)
             db.session.commit()

@@ -30,7 +30,7 @@ def send_sms_code(code: str, phone: str):
 
     message = client.messages.create(
         body=f"Código: {code}",
-        from_="",
+        from_="+14025184722",
         to=f"+55{phone}",     
     )
 
