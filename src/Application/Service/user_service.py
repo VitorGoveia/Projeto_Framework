@@ -2,7 +2,7 @@ from src.Config.db import db
 from src.Infrastructure.Model.User_model import UserModel
 from src.Domain.User import UserDomain
 from werkzeug.security import generate_password_hash, check_password_hash
-from src.Infrastructure.Http.whats_app import send_whatsapp_code
+#from src.Infrastructure.Http.whats_app import send_whatsapp_code
 
 class UserService:
     
