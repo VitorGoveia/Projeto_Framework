@@ -39,6 +39,7 @@ class SellService:
                 id_seller=new_sell.id_seller,
                 id_product=new_sell.id_product,
                 status=new_sell.status
+            
             )
             
             db.session.add(sell)
