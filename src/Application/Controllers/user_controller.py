@@ -50,7 +50,7 @@ class UserController:
             }), 201)
             
         except Exception as e:
-            return make_response(jsonify({"erro": "Erro interno do servidor"}), 500)
+            return make_response(jsonify({"erro": f"Erro interno do servidor {e}"}), 500)
     
     @staticmethod
     def login_user():

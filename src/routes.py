@@ -1,6 +1,7 @@
 from src.Application.Controllers.user_controller import UserController
 from src.Application.Controllers.product_controller import ProductController
 from src.Application.Controllers.sell_controller import SellController
+from src.Application.Controllers.report_controller import ReportController
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 
@@ -93,3 +94,21 @@ def register_routes(app):
     def route_delete_sell(sell_id):
         current_user_id = get_jwt_identity()
         return SellController.delete_sell(sell_id, int(current_user_id))  
+    
+
+
+
+    @app.route('/report/three/<int:user_id>', methods=['GET'])
+    @jwt_required()
+    def report_top3_products(user_id):
+        return ReportController.get_top_3_products(user_id)
+    
+    @app.route('/report/all/<int:user_id>', methods=['GET'])
+    @jwt_required()
+    def report_all_products(user_id):
+        return ReportController.get_top_all_products(user_id)
+    
+    @app.route('/report/<int:user_id>/<int:produto_id>', methods=['GET'])
+    @jwt_required()
+    def report_specific_products(user_id, produto_id):
+        return ReportController.get_specific_product(user_id, produto_id)
