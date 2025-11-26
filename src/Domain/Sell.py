@@ -5,6 +5,7 @@ class SellDomain:
         self.id_seller = id_seller
         self.id_product = id_product
         self.status = "VENDIDO"
+        self.isactivate = True
     
     def to_dict(self):
         return {
@@ -12,5 +13,6 @@ class SellDomain:
             "quantity": self.quantity,
             "id_seller": self.id_seller,
             "id_product": self.id_product,
-            "status": self.status
+            "status": self.status,
+            "isactivate": self.isactivate
         }

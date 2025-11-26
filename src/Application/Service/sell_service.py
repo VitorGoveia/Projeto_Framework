@@ -68,7 +68,10 @@ class SellService:
     @staticmethod
     def get_sell_by_id_seller(id_seller):
         try:
-            sells = SellModel.query.filter_by(id_seller=id_seller).all()
+            sells = SellModel.query.filter_by(
+                id_seller=id_seller,
+                isactivate=True
+                ).all()
             if not sells:
                 return {"mensagem": "Nenhuma venda encontrada"}, 200
             
@@ -130,6 +133,7 @@ class SellService:
                 product.quantity += sell.quantity
             
             sell.status = "CANCELADO"
+            sell.isactivate = False
             db.session.commit()
             
             return {"mensagem": "Venda cancelada com sucesso"}, 200
@@ -137,3 +141,5 @@ class SellService:
         except Exception as e:
             db.session.rollback()
             raise e
+
+    
